@@ -9,12 +9,9 @@ section .text
 
 _start:
 	;Set up function
-	mov eax, [x]		; moves x to eax
-	push eax		; push value of eax to stack
-	mov eax, [y]		; moves y to eax
-	push eax		; push y to stack
-	mov eax, [z]		; moves z to eax
-	push eax		; push z to stack
+	push dword [z]		; push z to stack
+	push dword [y]		; push y to stack
+	push dword [x]		; push x to stack
 
 	call quiz_function	; call function
 
@@ -27,16 +24,19 @@ quiz_function:
 	; Add
 	; Return result
 	; Deallocate
+	push ebp		; save the base pointer
+   	mov ebp, esp		; set base pointer to current stack pointer
 
-	pop edx			; moves top of stack to edx, edx = z
-	pop ecx			; moves top of stack to ecx, ecx = y
-	pop ebx			; moves top of stack to ebx, ebx = x
+	mov eax, [ebp+8]	; load x into eax
+	mov ebx, [ebp+12]	; load y into ebx
+	mov ecx, [ebp+16]	; load z into ecx
 
 	; Add
-	mov eax, 0 		; initialize eax to 0
-	add eax, ebx		; eax = 0 + 23 or 0 + x
-	add eax, ecx		; eax = 23 + 90 or x + y
-	add eax, edx		; eax = 23 + 90 + 13 or x + y + z
+	add eax, ebx		; eax = eax + ebx
+	add eax, ecx		; eax = eax + ecx
+
+	mov esp, ebp		; restore stack pointer
+	pop ebp			; restore base pointer
 
 	; Return result
 	mov [result], eax	; store result in result
